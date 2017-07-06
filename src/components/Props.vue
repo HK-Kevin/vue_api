@@ -10,7 +10,7 @@
           </Col>
         </Row>
         <ol style="text-align: left;font-size: 16px">
-          <li><p>props 可以是数组或对象，用于接收来自父组件的数据。props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值。
+          <li><p><code class="code">props</code>可以是数组或对象，用于接收来自父组件的数据。<code class="code">props</code>可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值。<code class="code">props</code>最多的使用场景是父组件向子组件专递数据，在构建组件过程中也是被大量应用。
         </p></li>
         </ol>
 
@@ -25,11 +25,10 @@
           <li><p class="exampleTitle">一般使用</p>
             <div class="codeBox">
           <pre v-highlight><code class="codeStyle">
-          var data = { a: 1 }// 直接创建一个实例
-          var vm = new Vue({
-          data: data})
-          vm.a               // -> 1
-          vm.$data === data  // -> true
+          Vue.component('props-demo1', {
+        props: ['data', 'myMessage']
+})
+
 
         </code></pre>
             </div>
