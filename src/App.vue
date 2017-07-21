@@ -31,7 +31,10 @@
                 <router-link to="/myDatas">data</router-link>
               </Menu-item>
               <Menu-item name="2-2">
-                <router-link to="/props">props</router-link>
+                <router-link to="/props">props & propsData</router-link>
+              </Menu-item>
+              <Menu-item name="2-3">
+                <router-link to="/computed">computed</router-link>
               </Menu-item>
             </Submenu>
             <Submenu name="3">

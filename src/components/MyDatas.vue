@@ -8,7 +8,7 @@
           <Tag color="blue">1.概述</Tag>
           </Col>
         </Row>
-        <ol style="text-align: left;font-size: 16px">
+        <ol style="text-align: left;font-size: 18px">
           <li><p><code class="code">data</code>属性是<code class="code">Vue</code>实例的数据对象(<code class="code">Vue.prototype.data={}</code>)，通过<code class="code">vm.$data</code>)可以访问到原始数据，由于<code class="code">Vue</code>做过代理处理，<code class="code">Vue</code>实例能够直接访问到data对象上的所有属性（<code class="code">vm.a=vm.$data.a</code>）。
         </p></li>
         </ol>
@@ -152,7 +152,7 @@
   }
 
   .answer {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .codeBox {

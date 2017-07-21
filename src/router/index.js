@@ -4,6 +4,7 @@ import Home from '@/pages/Home'
 import Index from '../pages/Index'
 import Props from '../components/Props.vue'
 import MyDatas from '../components/MyDatas.vue'
+import Computed from '../components/Computed.vue'
 
 Vue.use(Router)
 
@@ -24,6 +25,11 @@ export default new Router({
     {
       path:'/props',
       component:Props
+    },
+    {
+      path:'/computed',
+      component:Computed
     }
+
   ]
 })
