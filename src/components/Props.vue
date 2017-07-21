@@ -1,20 +1,25 @@
 <template>
-  <VuePerfectScrollbar class="scroll-area" v-once :settings="settings">
+
     <div>
       <Alert type="success" class="item_title"><p>vm.props</p>
         <p style="text-align: right">Array &lt;string&gt; | Object</p></Alert>
+      <!--1.概述-->
       <div>
         <Row>
           <Col span="3" style="text-align: left">
           <Tag color="blue">1.概述</Tag>
           </Col>
         </Row>
-        <ol style="text-align: left;font-size: 16px">
-          <li><p><code class="code">props</code>可以是数组或对象，用于接收来自父组件的数据。<code class="code">props</code>可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值。<code class="code">props</code>最多的使用场景是父组件向子组件专递数据，在构建组件过程中也是被大量应用。
+        <ol style="text-align: left;font-size: 16px;line-height: 28px">
+          <li><p> <Icon type="chevron-right"></Icon> Vue官网：<code class="code">props</code>可以是数组或对象，用于接收来自父组件的数据。<code class="code">props</code>可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值。<code class="code">props</code>最多的使用场景是父组件向子组件专递数据，在构建组件过程中也是被大量应用。
+        </p></li>
+          <li><p> <Icon type="chevron-right"></Icon> 组件是有自己的数据属性的，这个跟实例不一样，子实例可以访问自己的数据，还能拿到集成的父类的数据。子组件只能访问自己的数据，不能直接访问父组件的数据，子组件想要拿到父组件的数据则需通过<code class="code">props</code>传递。
         </p></li>
         </ol>
 
       </div>
+
+     <!-- 2.实例-->
       <div>
         <Row>
           <Col span="3" style="text-align: left">
@@ -22,30 +27,33 @@
           </Col>
         </Row>
         <ol style="text-align: left">
-          <li><p class="exampleTitle">一般使用</p>
+          <li><p class="exampleTitle">一般使用：向组件中传递参数，在组件中可以通过<code class="code">props</code>拿到这个数据，参数未加<code class="code">v-bind</code>绑定，父组件数据变化时，是不能传递到子组件。</p>
             <div class="codeBox">
           <pre v-highlight><code class="codeStyle">
-          Vue.component('props-demo1', {
-        props: ['data', 'myMessage']
-})
+        // 声明 props
+        Vue.component('child', {
+                props: ['message'], // 就像 data 一样，prop 可以用在模板内
+                // 同样也可以在 vm 实例中像“this.message”这样使用
+                template: '&lt;span&gt; { { message } } &lt;/span&gt'})
 
-
+        //向组件传递prop
+        &lt;child message="hello!"&gt;&lt;/child&gt;
         </code></pre>
             </div>
           </li>
-          <li><p class="exampleTitle">组件中使用</p>
+          <li><p class="exampleTitle">动态绑定：在传递参数的时候通过<code class="code">v-bind</code>绑定，父组件数据变化时，子组件也会变化。下面是<code class="code">iview</code>的一个表单组件。</p>
             <div class="codeBox">
           <pre v-highlight><code class="codeStyle">
-          var Component = Vue.extend({
-           data: function () {//在组件中使用必须是函数形式
-           return { a: 1 }}})
+        &lt;Form  :rules="ruleInline" &gt;&lt;/Form&gt;
         </code></pre>
             </div>
           </li>
 
         </ol>
       </div>
-      <div>
+
+    <!--  3.注意-->
+     <div>
         <Row>
           <Col span="3" style="text-align: left">
           <Tag color="blue">3.注意</Tag>
@@ -107,16 +115,33 @@
         </ol>
       </div>
 
+      <!--4.理解-->
       <div>
         <Row>
           <Col span="3" style="text-align: left">
           <Tag color="blue">4.深入</Tag>
           </Col>
         </Row>
-        <p>深入理解深度响应</p></div>
+        <ol style="text-align: left">
+          <li><p class="exampleTitle"><code class="code">props</code>源码：<code class="code">props</code>的原理是通过遍历组件的自定义属性，然后解析并将其绑定到<code class="code">$data</code>中去。这也解释了为什么通过<code class="code">props</code>传递的数据可以直接通过<code class="code">this.someData</code>拿到。</p>
+            <div class="codeBox">
+          <pre v-highlight><code class="codeStyle">
+      exports._initProps = function () {
+          let isComponent = this.$options.isComponent;
+          if (!isComponent) return;  //判断是否是组件
+          let el = this.$options.el; //获取当前元素
+          let attrs = Array.from(el.attributes);//获取该元素上的自定义属性
+          attrs.forEach((attr) => { //遍历自定义属性数组
+          let attrName = attr.name; //解析
+          let attrValue = attr.value;
+          this.$data[attrName] = attrValue;}); };//添加到$data中
+        </code></pre>
+            </div>
+          </li>
+        </ol>
+      </div>
 
     </div>
-  </VuePerfectScrollbar>
 </template>
 <script>
   import VuePerfectScrollbar from 'vue-perfect-scrollbar'
@@ -126,7 +151,7 @@
       return {
         settings: {
           maxScrollbarLength: 600,
-          wheelPropagation: false,
+          wheelPropagation: true,
           wheelSpeed: 0.5,
         }
       }
@@ -138,12 +163,12 @@
 
 
 <style scoped>
-  .scroll-area {
-    position: relative;
+/*  .scroll-area {
+    !*position: relative;*!
     margin: auto;
-    width: 400px;
-    height: 300px;
-  }
+    width: 500px;
+   height: 300px;
+  }*/
 
   .item_title {
     border-left: 10px solid red;
@@ -174,7 +199,7 @@
 
   .codeBox {
     background-color: rgb(246, 246, 246) !important;
-    width: 480px;
+    width: 50%;
     margin-left: 10%;
   }
 

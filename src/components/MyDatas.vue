@@ -1,5 +1,4 @@
 <template>
-  <VuePerfectScrollbar class="scroll-area" v-once :settings="settings">
     <div>
       <Alert type="success" class="item_title"><p>vm.data</p>
         <p style="text-align: right">Object | Function</p></Alert>
@@ -117,35 +116,18 @@
         <p>深入理解深度响应</p></div>
 
     </div>
-  </VuePerfectScrollbar>
+
 </template>
 <script>
-  import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+
   export default {
     name: 'Props',
-    data() {
-      return {
-        settings: {
-          maxScrollbarLength: 600,
-          wheelPropagation: false,
-          wheelSpeed: 0.5,
-        }
-      }
-    },
-    components: {VuePerfectScrollbar}
-
+    components: {}
   }
 </script>
 
 
 <style scoped>
-  .scroll-area {
-    position: relative;
-    margin: auto;
-    width: 400px;
-    height: 300px;
-  }
-
   .item_title {
     border-left: 10px solid red;
     font-size: 20px;
