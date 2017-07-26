@@ -1,8 +1,8 @@
 <template>
 
   <div>
-    <Alert type="success" class="item_title"><p>vm.props</p>
-      <p style="text-align: right">Array &lt;string&gt; | Object</p></Alert>
+    <Alert type="success" class="item_title"><p>vm.computed</p>
+      <p style="text-align: right">{ [key: string]: Function | { get: Function, set: Function } }</p></Alert>
     <!--1.概述-->
     <div>
       <Row>
@@ -11,11 +11,10 @@
         </Col>
       </Row>
       <ol style="text-align: left;font-size: 18px;line-height: 28px">
-        <li><p> <Icon type="chevron-right"></Icon> Vue官网：<code class="code">props</code>可以是数组或对象，用于接收来自父组件的数据。<code class="code">props</code>可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义校验和设置默认值。<code class="code">props</code>最多的使用场景是父组件向子组件专递数据，在构建组件过程中也是被大量应用。
+        <li><p> <Icon type="chevron-right"></Icon> 计算属性是用来声明式的描述一个值依赖了其它的值。当模板里把数据绑定到一个计算属性上时， <code class="code">Vue</code>会在其依赖的任何值导致该计算属性改变时更新 <code class="code">DOM</code> 。
         </p></li>
-        <li><p> <Icon type="chevron-right"></Icon> 组件是有自己的数据属性的，这个跟实例不一样，子实例可以访问自己的数据，还能拿到集成的父类的数据。子组件只能访问自己的数据，不能直接访问父组件的数据，子组件想要拿到父组件的数据则需通过<code class="code">props</code>传递。
-        </p></li>
-        <li><p> <Icon type="chevron-right"></Icon> <code class="code">propsData</code>只用于<code class="code">new</code>创建的实例中，用于全局扩展时进行数据传递，主要作用是方便测试。。
+        <li><p> <Icon type="chevron-right"></Icon>
+          使用场景：在需要对数据进行复杂处理，且可能多次使用的情况下，尽量采取计算属性的方式。
         </p></li>
       </ol>
 
@@ -29,24 +28,34 @@
         </Col>
       </Row>
       <ol style="text-align: left">
-        <li><p class="exampleTitle">一般使用：向组件中传递参数，在组件中可以通过<code class="code">props</code>拿到这个数据，参数未加<code class="code">v-bind</code>绑定，父组件数据变化时，是不能传递到子组件。</p>
+        <li><p class="exampleTitle">一般使用：用法和 <code class="code">methods</code>差不太多，只是数据会被缓存起来，等依赖的数据发生变化的时候才会重新计算</p>
           <div class="codeBox">
           <pre v-highlight><code class="codeStyle">
-        // 声明 props
-        Vue.component('child', {
-                props: ['message'], // 就像 data 一样，prop 可以用在模板内
-                // 同样也可以在 vm 实例中像“this.message”这样使用
-                template: '&lt;span&gt; { { message } } &lt;/span&gt'})
+        &lt;p&gt;Original message: "{{ message }}"&lt;/p&gt;
+        &lt;p&gt;Computed reversed message: "{{ reversedMessage }}"&lt;/p&gt;
 
-        //向组件传递prop
-        &lt;child message="hello!"&gt;&lt;/child&gt;
+        var vm = new Vue({
+             el: '#example',
+             data: {message: 'Hello'},
+             computed: {
+                reversedMessage: function () {
+                return this.message.split('').reverse().join('')}}})
         </code></pre>
           </div>
         </li>
-        <li><p class="exampleTitle">动态绑定：在传递参数的时候通过<code class="code">v-bind</code>绑定，父组件数据变化时，子组件也会变化。下面是<code class="code">iview</code>的一个表单组件。</p>
+        <li><p class="exampleTitle">使用<code class="code">setter</code>：在<code class="code">computed</code>中不仅可以设置<code class="code">getter</code>，同时可以设置<code class="code">setter</code>。</p>
           <div class="codeBox">
           <pre v-highlight><code class="codeStyle">
-        &lt;Form  :rules="ruleInline" &gt;&lt;/Form&gt;
+       var vm = new Vue({
+          data: { a: "hello" },
+          computed: {
+        // 读取和设置
+          aPlus: {
+            get: function () {
+               return this.a + 'boy'
+             },
+            set: function (a) {
+               this.a = a}}}})
         </code></pre>
           </div>
         </li>
@@ -62,29 +71,17 @@
         </Col>
       </Row>
       <ol style="text-align: left">
-        <li><p class="question">1.<code class="code">props</code>是双向数据流吗？</p>
-          <p class="answer">答：<code class="code">vue2.0</code>，作者认为双向绑定破坏了【单向数据流】，为了防止子组件随意修改父组件的状态，取消了 <code class="code">.sync</code>修饰符。但是我们很多时候有修<code class="code">props</code>数据的冲动，主要是两个场景：1.局部共享数据；2.处理成子组件的输出数据；于是在<code class="code">vue2.3</code>中重新引入了 <code class="code">.sync</code> 修饰符。
+        <li><p class="question">1.vue组件中computed不能使用箭头函数？</p>
+          <p class="answer">答：因为因为箭头函数绑定父级的上下文，不会指向预定的<code class="code">vue</code>实例。而<code class="code">computed</code>computed是挂载<code class="code">vue</code>实例上的方法。
         </p>
-          <div class="codeBox">
-          <pre v-highlight><code class="codeStyle">
-          // 1.定义一个局部变量，并用 prop 的值初始化它：
-          props: ['initialCounter'],
-          data: function () {
-                return { counter: this.initialCounter }}
-
-          // 2.定义一个计算属性，处理 prop 的值并返回。
-          props: ['size'],
-          computed: {
-                 normalizedSize: function () {
-
-          // 3.使用.sync 修饰符
-          &lt;comp :foo.sync="bar"&gt;&lt;/comp&gt;
-        </code></pre>
-          </div>
         </li>
 
-        <li><p class="question">2.props是引用数据类型的时候，子组件能动态的改变父级的数据。</p>
-          <p class="answer">答：因为在JS中，对象和数组是引用数据类型，指向同一个内存空间，如果<code class="code">props</code>是一个对象或者是数组的时候，在子组件内部可以改变父组件的数据。</p>
+        <li><p class="question">2.computed中的函数名能和data中的一样么？</p>
+          <p class="answer">答：建议不要用相同的名字，在V2.0.3中computed定义的属性会覆盖<code class="code">data</code>中的数据，而在V2.2.4中做了判断，<code class="code">computed</code>不会覆盖<code class="code">data</code>，data<code class="code">data</code>数据优先，不能取到<code class="code">computed</code>中的数据。</p>
+        </li>
+        <li><p class="question">3.computed必须使用data里面的数据吗？</p>
+          <p class="answer">答：不是必须，建议依赖<code class="code">data</code>里面的数据，<code class="code">computed</code>是严重依赖<code class="code">data</code>属性的，如果<code class="code">computed</code>里面没有依赖<code class="code">data</code>里面的属性，也就没有用<code class="code">computed</code>的必要了。
+        </p>
         </li>
       </ol>
     </div>
@@ -100,15 +97,43 @@
         <li><p class="exampleTitle"><code class="code">props</code>静态props原理：静态<code class="code">props</code>的原理是通过遍历组件的自定义属性，然后解析并将其绑定到<code class="code">$data</code>中去。这也解释了为什么通过<code class="code">props</code>传递的数据可以直接通过<code class="code">this.someData</code>拿到。</p>
           <div class="codeBox">
           <pre v-highlight><code class="codeStyle">
-      exports._initProps = function () {
-          let isComponent = this.$options.isComponent;
-          if (!isComponent) return;  //判断是否是组件
-          let el = this.$options.el; //获取当前元素
-          let attrs = Array.from(el.attributes);//获取该元素上的自定义属性
-          attrs.forEach((attr) => { //遍历自定义属性数组
-          let attrName = attr.name; //解析
-          let attrValue = attr.value;
-          this.$data[attrName] = attrValue;}); };//添加到$data中
+           //初始化计算属性
+      function initComputed (vm: Component, computed: Object) {
+         const watchers = vm._computedWatchers = Object.create(null)
+         for (const key in computed) {
+            const userDef = computed[key]
+            const getter = typeof userDef === 'function' ? userDef : userDef.get
+            //通过watch为计算属性添加动态响应.
+            watchers[key] = new Watcher(vm, getter, noop, computedWatcherOptions)
+            //组件定义的计算属性已经在组件原型上定义了。我们只需要在这里定义实例化的计算属性。
+            if (!(key in vm)) {
+            defineComputed(vm, key, userDef)}}
+         }
+
+      function defineComputed (target: any, key: string, userDef: Object | Function) {
+           //userDef如果是函数类型，只有getter
+           if (typeof userDef === 'function') {
+              sharedPropertyDefinition.get = createComputedGetter(key)
+              sharedPropertyDefinition.set = noop
+           } else {
+            //userDef如果是对象类型，可能存在getter或者setter
+              sharedPropertyDefinition.get = userDef.get
+              ? userDef.cache !== false
+              ? createComputedGetter(key): userDef.get: noop
+              sharedPropertyDefinition.set = userDef.set? userDef.set: noop}
+
+          Object.defineProperty(target, key, sharedPropertyDefinition)}
+
+      function createComputedGetter (key) {
+            return function computedGetter () {
+            const watcher = this._computedWatchers && this._computedWatchers[key]
+            if (watcher) {
+                if (watcher.dirty) {
+                      watcher.evaluate()}
+                if (Dep.target) {
+                      watcher.depend()}
+              return watcher.value}}}
+
         </code></pre>
           </div>
         </li>
@@ -168,7 +193,7 @@
     margin: 0 2px;
     border-radius: 2px;
     font-family: 'Roboto Mono', Monaco, courier, monospace;
-    font-size: 0.8em;
+    font-size: 16px;
     background-color: #f8f8f8;
   }
 
